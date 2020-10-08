@@ -21,7 +21,7 @@ employee.get("/", async (req, res) => {
     .skip(offset)
     .limit(limit)
     .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json({ message: err }));
+    .catch((err) => res.status(400).json(err));
 });
 
 employee.post("/new", async (req, res) => {
@@ -36,16 +36,27 @@ employee.post("/new", async (req, res) => {
     { upsert: true }
   )
     .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json({ message: err }));
+    .catch((err) => res.status(400).json(err));
 });
 
 employee.post("/upload/csv", upload.single("file"), async (req, res) => {
-  const records = await parse(req.file.buffer.toString(), {
-    columns: ["id", "login", "name", "salary"],
-    comment: "#",
-    trim: true,
-    skip_empty_lines: true,
-  });
+  if (!req.file.size) {
+    res.status(400).json({ reason: "Empty file" });
+    return;
+  }
+
+  let records;
+  try {
+    records = await parse(req.file.buffer.toString(), {
+      columns: ["id", "login", "name", "salary"],
+      comment: "#",
+      trim: true,
+      skip_empty_lines: true,
+    });
+  } catch (err) {
+    res.status(400).json(err);
+    return;
+  }
 
   const session = await mongoose.startSession();
   session
@@ -55,7 +66,7 @@ employee.post("/upload/csv", upload.single("file"), async (req, res) => {
           Employee.updateOne({ id: { $eq: record.id } }, record, {
             upsert: true,
             runValidators: true,
-            session: session,
+            session,
           })
         )
       );

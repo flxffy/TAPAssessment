@@ -18,7 +18,9 @@ const EmployeeSchema = mongoose.Schema({
   salary: {
     type: mongoose.Decimal128,
     required: true,
-    min: 0,
+    validate: {
+      validator: (salary) => parseFloat(salary) >= 0.0,
+    },
   },
 });
 

@@ -7,12 +7,14 @@ const parse = require("csv-parse/lib/sync");
 const Users = require("../models/Users");
 const users = express.Router();
 
+const columns = ["id", "login", "name", "salary"];
+
 users.get("/", async (req, res) => {
   const {
     minSalary = 0,
     maxSalary = Number.MAX_SAFE_INTEGER,
     offset = 0,
-    limit = 0,
+    limit = 30,
     sort = { name: 1 },
   } = req.query;
 
@@ -20,7 +22,14 @@ users.get("/", async (req, res) => {
     .sort(sort)
     .skip(offset)
     .limit(limit)
-    .then((data) => res.status(200).json(data))
+    .then((data) => {
+      const results = data.map((d) => {
+        const result = {};
+        columns.forEach((col) => (result[col] = d[col].toString()));
+        return result;
+      });
+      res.status(200).json({ results, columns });
+    })
     .catch((err) => res.status(400).json(err));
 });
 
@@ -48,7 +57,7 @@ users.post("/upload", upload.single("file"), async (req, res) => {
   let records;
   try {
     records = await parse(req.file.buffer.toString(), {
-      columns: ["id", "login", "name", "salary"],
+      columns: columns,
       comment: "#",
       trim: true,
       skip_empty_lines: true,

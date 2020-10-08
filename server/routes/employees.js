@@ -8,7 +8,18 @@ const Employee = require("../models/Employee");
 const employee = express.Router();
 
 employee.get("/", async (req, res) => {
-  Employee.find()
+  const {
+    minSalary = 0,
+    maxSalary = Number.MAX_SAFE_INTEGER,
+    offset = 0,
+    limit = 0,
+    sort = { name: 1 },
+  } = req.query;
+
+  Employee.find({ salary: { $gte: minSalary, $lte: maxSalary } })
+    .sort(sort)
+    .skip(offset)
+    .limit(limit)
     .then((data) => res.status(200).json(data))
     .catch((err) => res.status(400).json({ message: err }));
 });

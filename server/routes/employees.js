@@ -40,9 +40,7 @@ employee.post("/new", async (req, res) => {
 });
 
 employee.post("/upload/csv", upload.single("file"), async (req, res) => {
-  const b = req.file["buffer"];
-
-  const records = await parse(b.toString(), {
+  const records = await parse(req.file.buffer.toString(), {
     columns: ["id", "login", "name", "salary"],
     comment: "#",
     trim: true,
@@ -50,29 +48,20 @@ employee.post("/upload/csv", upload.single("file"), async (req, res) => {
   });
 
   const session = await mongoose.startSession();
-  session.startTransaction();
-
-  Promise.all(
-    records.map(async (record) =>
-      Employee.updateOne({ id: { $eq: record.id } }, record, {
-        upsert: true,
-        runValidators: true,
-        session: session,
-      })
-    )
-  )
-    .then(async (data) => {
-      await session.commitTransaction();
-      res.status(200).json(data);
+  session
+    .withTransaction(() => {
+      return Promise.all(
+        records.map(async (record) =>
+          Employee.updateOne({ id: { $eq: record.id } }, record, {
+            upsert: true,
+            runValidators: true,
+            session: session,
+          })
+        )
+      );
     })
-    .catch(async (err) => {
-      await session.abortTransaction();
-      res.status(400).json(err);
-    })
-    .finally(() => {
-      session.endSession();
-      res.send();
-    });
+    .then(async (data) => res.status(200).json(data))
+    .catch(async (err) => res.status(400).json(err));
 });
 
 employee.delete("/:id", async (req, res) => {

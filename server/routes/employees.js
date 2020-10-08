@@ -64,4 +64,10 @@ employee.post("/upload/csv", upload.single("file"), async (req, res) => {
     });
 });
 
+employee.delete("/:id", async (req, res) => {
+  Employee.deleteOne({ id: { $eq: req.params.id } })
+    .then((data) => res.status(200).json(data))
+    .catch((err) => res.status(400).json(err));
+});
+
 module.exports = employee;

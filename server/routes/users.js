@@ -15,7 +15,7 @@ users.get("/", async (req, res) => {
     maxSalary = Number.MAX_SAFE_INTEGER,
     offset = 0,
     limit = 30,
-    sort = { name: 1 },
+    sort = { id: 1 },
   } = req.query;
 
   Users.find({ salary: { $gte: minSalary, $lte: maxSalary } })

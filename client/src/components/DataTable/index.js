@@ -11,7 +11,7 @@ import Paper from "@material-ui/core/Paper";
 
 import useStyles from "./useStyles";
 
-const DataTable = ({ rows, headers }) => {
+const DataTable = ({ rows = [], headers = [] }) => {
   const classes = useStyles();
 
   return (
@@ -37,24 +37,10 @@ const DataTable = ({ rows, headers }) => {
     </TableContainer>
   );
 };
+
 DataTable.propTypes = {
   headers: PropTypes.arrayOf(PropTypes.string),
   rows: PropTypes.arrayOf(PropTypes.object),
-};
-
-DataTable.defaultProps = {
-  headers: ["id", "login", "name", "salary"],
-  rows: [
-    { id: "e0008", login: "adumbledore", name: "Albus Dumbledore", salary: "0.0" },
-    { id: "e0009", login: "dmalfoy", name: "Draco Malfoy", salary: "0.0" },
-    { id: "e0006", login: "gwesley", name: "Ginny Weasley", salary: "0.0" },
-    { id: "e0001", login: "hpotter", name: "Harry Potter", salary: "0.0" },
-    { id: "e0007", login: "hgranger", name: "Hermione Granger", salary: "0.0" },
-    { id: "e0005", login: "voldemort", name: "Lord Voldemort", salary: "0.0" },
-    { id: "e0002", login: "rwesley", name: "Ron Weasley", salary: "0.0" },
-    { id: "e0004", login: "rhagrid", name: "Rubeus Hagrid", salary: "0.0" },
-    { id: "e0003", login: "ssnape", name: "Severus Snape", salary: "0.0" },
-  ],
 };
 
 export default DataTable;

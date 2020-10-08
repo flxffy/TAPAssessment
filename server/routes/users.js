@@ -4,10 +4,10 @@ const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 const parse = require("csv-parse/lib/sync");
 
-const Employee = require("../models/Employee");
-const employee = express.Router();
+const Users = require("../models/Users");
+const users = express.Router();
 
-employee.get("/", async (req, res) => {
+users.get("/", async (req, res) => {
   const {
     minSalary = 0,
     maxSalary = Number.MAX_SAFE_INTEGER,
@@ -16,7 +16,7 @@ employee.get("/", async (req, res) => {
     sort = { name: 1 },
   } = req.query;
 
-  Employee.find({ salary: { $gte: minSalary, $lte: maxSalary } })
+  Users.find({ salary: { $gte: minSalary, $lte: maxSalary } })
     .sort(sort)
     .skip(offset)
     .limit(limit)
@@ -24,8 +24,8 @@ employee.get("/", async (req, res) => {
     .catch((err) => res.status(400).json(err));
 });
 
-employee.post("/new", async (req, res) => {
-  Employee.updateOne(
+users.post("/new", async (req, res) => {
+  Users.updateOne(
     { id: { $eq: req.body.id } },
     {
       id: req.body.id,
@@ -39,7 +39,7 @@ employee.post("/new", async (req, res) => {
     .catch((err) => res.status(400).json(err));
 });
 
-employee.post("/upload/csv", upload.single("file"), async (req, res) => {
+users.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file.size) {
     res.status(400).json({ reason: "Empty file" });
     return;
@@ -63,7 +63,7 @@ employee.post("/upload/csv", upload.single("file"), async (req, res) => {
     .withTransaction(() => {
       return Promise.all(
         records.map(async (record) =>
-          Employee.updateOne({ id: { $eq: record.id } }, record, {
+          Users.updateOne({ id: { $eq: record.id } }, record, {
             upsert: true,
             runValidators: true,
             session,
@@ -75,10 +75,10 @@ employee.post("/upload/csv", upload.single("file"), async (req, res) => {
     .catch(async (err) => res.status(400).json(err));
 });
 
-employee.delete("/:id", async (req, res) => {
-  Employee.deleteOne({ id: { $eq: req.params.id } })
+users.delete("/:id", async (req, res) => {
+  Users.deleteOne({ id: { $eq: req.params.id } })
     .then((data) => res.status(200).json(data))
     .catch((err) => res.status(400).json(err));
 });
 
-module.exports = employee;
+module.exports = users;

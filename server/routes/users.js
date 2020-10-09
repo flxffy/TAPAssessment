@@ -85,9 +85,15 @@ users.post("/upload", upload.single("file"), async (req, res) => {
 });
 
 users.delete("/:id", async (req, res) => {
-  Users.deleteOne({ id: { $eq: req.params.id } })
-    .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json(err));
+  Users.findOne({ id: req.params.id }, (err, user) => {
+    if (err) {
+      res.status(400).json(err).send();
+    } else if (!user) {
+      res.status(404).send();
+    } else {
+      Users.deleteOne(user).then((data) => res.status(200).json(data));
+    }
+  });
 });
 
 module.exports = users;

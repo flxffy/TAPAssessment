@@ -15,13 +15,29 @@ users.get("/", async (req, res) => {
     maxSalary = Number.MAX_SAFE_INTEGER,
     offset = 0,
     limit = 30,
-    sort = { id: 1 },
+    sort = ["+id"],
   } = req.query;
 
+  let sortCriteria;
+  try {
+    sortCriteria = sort.map((criteria) => {
+      if (criteria[0] == "+") {
+        return [criteria.slice(1), 1];
+      } else if (criteria[0] == "-") {
+        return [criteria.slice(1), -1];
+      } else {
+        throw new Error("Invalid sort criteria");
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ reason: "Invalid sort criteria" });
+    return;
+  }
+
   Users.find({ salary: { $gte: minSalary, $lte: maxSalary } })
-    .sort(sort)
-    .skip(offset)
-    .limit(limit)
+    .sort(sortCriteria)
+    .skip(parseInt(offset))
+    .limit(parseInt(limit))
     .then((data) => {
       const results = data.map((d) => {
         const result = {};

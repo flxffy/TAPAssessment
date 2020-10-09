@@ -27,6 +27,12 @@ const Workspace = () => {
     dispatch({ type: "setSalaryRange", payload: { minSalary, maxSalary } });
   };
 
+  const onClearSalaryFilter = () =>
+    dispatch({
+      type: "setSalaryRange",
+      payload: { minSalary: initialState.minSalary, maxSalary: initialState.maxSalary },
+    });
+
   const onSetOrderingParams = (orderBy, order) => {
     dispatch({ type: "setOrderingParams", payload: { params: { order, orderBy } } });
   };
@@ -46,6 +52,7 @@ const Workspace = () => {
     <div className={classes.container}>
       <RangeInput
         handleSubmit={onSetSalaryFilter}
+        handleClear={onClearSalaryFilter}
         inputLabel="Filter by Salary"
         lowerBoundLabel="Minimum"
         upperBoundLabel="Maximum"

@@ -9,13 +9,14 @@ import TextField from "@material-ui/core/TextField";
 import useStyles from "./useStyles";
 
 const RangeInput = ({
+  handleSubmit,
+  handleClear,
   lowerBoundDefaultValue,
   lowerBoundLabel,
   upperBoundDefaultValue,
   upperBoundLabel,
   inputAdornment,
   buttonLabel,
-  handleSubmit,
 }) => {
   const classes = useStyles();
 
@@ -39,6 +40,7 @@ const RangeInput = ({
         size="small"
         defaultValue={lowerBoundDefaultValue}
         type="number"
+        onChange={(event) => (document.getElementById("range-upper-bound").min = event.target.value)}
         InputProps={{
           inputProps: { min: 0 },
           startAdornment: <InputAdornment position="start">{inputAdornment}</InputAdornment>,
@@ -60,12 +62,18 @@ const RangeInput = ({
       <Button type="submit" variant="outlined" size="small">
         {buttonLabel}
       </Button>
+      {(lowerBoundDefaultValue || upperBoundDefaultValue) && (
+        <Button variant="outlined" size="small" onClick={handleClear}>
+          Clear
+        </Button>
+      )}
     </form>
   );
 };
 
 RangeInput.propTypes = {
   handleSubmit: PropTypes.func,
+  handleClear: PropTypes.func,
   lowerBoundLabel: PropTypes.string,
   upperBoundLabel: PropTypes.string,
   lowerBoundDefaultValue: PropTypes.number,

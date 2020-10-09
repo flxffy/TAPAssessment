@@ -7,7 +7,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     alignItems: "center",
     justifyContent: "space-between",
-    width: "75%",
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(1),
+    },
   },
 }));
 

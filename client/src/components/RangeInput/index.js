@@ -24,9 +24,11 @@ const RangeInput = ({
       className={classes.form}
       onSubmit={(e) => {
         e.preventDefault();
+        const lower = parseFloat(document.getElementById("range-lower-bound").value);
+        const upper = parseFloat(document.getElementById("range-upper-bound").value);
         handleSubmit(
-          parseFloat(document.getElementById("range-lower-bound").value) || undefined,
-          parseFloat(document.getElementById("range-upper-bound").value) || undefined
+          Number.isInteger(lower) ? lower : undefined,
+          Number.isInteger(upper) ? upper : undefined
         );
       }}
     >

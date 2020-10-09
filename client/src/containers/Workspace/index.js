@@ -6,7 +6,7 @@ import RangeInput from "components/RangeInput";
 import DataTable from "components/DataTable";
 import FileUpload from "components/FileUpload";
 import UserDialog from "components/UserDialog";
-import { fetchUsers, uploadUsers, createUser, updateUser } from "utils/api";
+import { fetchUsers, uploadUsers, createUser, updateUser, deleteUser } from "utils/api";
 
 import reducer, { initialState } from "./reducer";
 import { COLUMN_HEADERS } from "./constants";
@@ -84,8 +84,14 @@ const Workspace = () => {
     onOpenUserDialog("edit", row);
   };
 
-  const onDeleteUser = (row) => {
-    console.log("delete", row);
+  const onDeleteUser = ({ id }) => {
+    dispatch({ type: "setSubmitting", payload: { submitting: true } });
+    if (window.confirm("Are you sure? Deletion cannot be reversed.")) {
+      deleteUser(id)
+        .then(() => window.alert("User has been deleted successfully"))
+        .catch((err) => window.alert(err))
+        .finally(() => dispatch({ type: "setSubmitting", payload: { submitting: false } }));
+    }
   };
 
   return (

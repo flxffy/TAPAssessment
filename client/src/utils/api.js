@@ -14,4 +14,6 @@ const createUser = (body) => api.post("/users/new", body);
 
 const updateUser = (id, body) => api.patch(`/users/${id}`, body);
 
-export { fetchUsers, uploadUsers, createUser, updateUser };
+const deleteUser = (id) => api.delete(`/users/${id}`);
+
+export { fetchUsers, uploadUsers, createUser, updateUser, deleteUser };

@@ -96,17 +96,30 @@ const Workspace = () => {
 
   return (
     <div className={classes.container}>
-      <RangeInput
-        handleSubmit={onSetSalaryFilter}
-        handleClear={onClearSalaryFilter}
-        inputLabel="Filter by Salary"
-        lowerBoundLabel="Minimum"
-        upperBoundLabel="Maximum"
-        lowerBoundDefaultValue={state.minSalary}
-        upperBoundDefaultValue={state.maxSalary}
-        inputAdornment="$"
-        buttonLabel="Filter"
-      />
+      <div className={classes.options}>
+        <RangeInput
+          handleSubmit={onSetSalaryFilter}
+          handleClear={onClearSalaryFilter}
+          inputLabel="Filter by Salary"
+          lowerBoundLabel="Minimum"
+          upperBoundLabel="Maximum"
+          lowerBoundDefaultValue={state.minSalary}
+          upperBoundDefaultValue={state.maxSalary}
+          inputAdornment="$"
+          buttonLabel="Filter"
+        />
+        <div className={classes.buttons}>
+          <FileUpload
+            buttonLabel="Upload Users"
+            handleUpload={onUploadUsers}
+            uploading={state.uploading}
+            size="small"
+          />
+          <Button onClick={() => onOpenUserDialog("create", {})} size="small">
+            Create User
+          </Button>
+        </div>
+      </div>
       <DataTable
         headers={COLUMN_HEADERS}
         rows={users}
@@ -120,8 +133,7 @@ const Workspace = () => {
         handleEditRow={(row) => onEditUser(row)}
         handleDeleteRow={(row) => onDeleteUser(row)}
       />
-      <FileUpload buttonLabel="Upload Users" handleUpload={onUploadUsers} uploading={state.uploading} />
-      <Button onClick={() => onOpenUserDialog("create", {})}>Create User</Button>
+
       <UserDialog
         open={isDialogOpen}
         fields={COLUMN_HEADERS}

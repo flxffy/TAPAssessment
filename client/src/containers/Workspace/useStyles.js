@@ -12,6 +12,20 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(1),
     },
   },
+  options: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  buttons: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    "& > :not(:first-child)": {
+      marginLeft: theme.spacing(0.5),
+    },
+  },
 }));
 
 export default useStyles;

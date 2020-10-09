@@ -6,7 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import useStyles from "./useStyles";
 
-const FileUpload = ({ buttonLabel, handleUpload, uploading }) => {
+const FileUpload = ({ buttonLabel, handleUpload, uploading, ...props }) => {
   const classes = useStyles();
   return (
     <div>
@@ -21,7 +21,7 @@ const FileUpload = ({ buttonLabel, handleUpload, uploading }) => {
         {uploading ? (
           <CircularProgress size={24} />
         ) : (
-          <Button variant="contained" color="primary" component="span" disabled={uploading}>
+          <Button variant="contained" color="primary" component="span" disabled={uploading} {...props}>
             {buttonLabel}
           </Button>
         )}
@@ -34,6 +34,7 @@ FileUpload.propTypes = {
   buttonLabel: PropTypes.string,
   handleUpload: PropTypes.func,
   uploading: PropTypes.bool,
+  props: PropTypes.object,
 };
 
 export default FileUpload;

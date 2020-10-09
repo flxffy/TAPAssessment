@@ -15,21 +15,15 @@ users.get("/", async (req, res) => {
     maxSalary = Number.MAX_SAFE_INTEGER,
     offset = 0,
     limit = 30,
-    sort = ["+id"],
+    sort = "+id",
   } = req.query;
 
-  let sortCriteria;
-  try {
-    sortCriteria = sort.map((criteria) => {
-      if (criteria[0] == "+") {
-        return [criteria.slice(1), 1];
-      } else if (criteria[0] == "-") {
-        return [criteria.slice(1), -1];
-      } else {
-        throw new Error("Invalid sort criteria");
-      }
-    });
-  } catch (err) {
+  const sortCriteria = {};
+  if (sort[0] == "+") {
+    sortCriteria[sort.slice(1)] = 1;
+  } else if (sort[0] == "-") {
+    sortCriteria[sort.slice(1)] = -1;
+  } else {
     res.status(400).json({ reason: "Invalid sort criteria" });
     return;
   }
@@ -44,7 +38,7 @@ users.get("/", async (req, res) => {
         columns.forEach((col) => (result[col] = d[col].toString()));
         return result;
       });
-      res.status(200).json({ results, columns });
+      res.status(200).json({ results });
     })
     .catch((err) => res.status(400).json(err));
 });

@@ -10,6 +10,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableCell from "@material-ui/core/TableCell";
 import Paper from "@material-ui/core/Paper";
 
+import { formatDataEntry } from "./utils";
 import useStyles from "./useStyles";
 
 const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams }) => {
@@ -25,17 +26,17 @@ const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams 
 
   return (
     <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <Table className={classes.table} aria-label="users table">
         <TableHead>
           <TableRow>
-            {headers.map((header) => (
-              <TableCell key={header} direction={orderBy === header ? order : "asc"}>
+            {headers.map(({ label }) => (
+              <TableCell key={label} direction={orderBy === label ? order : "asc"}>
                 <TableSortLabel
-                  active={orderBy === header}
-                  direction={orderBy === header ? order : "asc"}
-                  onClick={() => handleSelectHeader(header)}
+                  active={orderBy === label}
+                  direction={orderBy === label ? order : "asc"}
+                  onClick={() => handleSelectHeader(label)}
                 >
-                  {header}
+                  {label}
                 </TableSortLabel>
               </TableCell>
             ))}
@@ -44,8 +45,8 @@ const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams 
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              {headers.map((header) => (
-                <TableCell key={`${row.id}-${row[header]}`}>{row[header]}</TableCell>
+              {headers.map(({ label, type }) => (
+                <TableCell key={`${row.id}-${row[label]}`}>{formatDataEntry(row[label], type)}</TableCell>
               ))}
             </TableRow>
           ))}
@@ -56,7 +57,7 @@ const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams 
 };
 
 DataTable.propTypes = {
-  headers: PropTypes.arrayOf(PropTypes.string),
+  headers: PropTypes.arrayOf(PropTypes.object),
   rows: PropTypes.arrayOf(PropTypes.object),
 };
 

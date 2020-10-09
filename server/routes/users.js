@@ -28,6 +28,7 @@ users.get("/", async (req, res) => {
     return;
   }
 
+  const count = await Users.countDocuments({});
   Users.find({ salary: { $gte: minSalary, $lte: maxSalary } })
     .sort(sortCriteria)
     .skip(parseInt(offset))
@@ -38,7 +39,7 @@ users.get("/", async (req, res) => {
         columns.forEach((col) => (result[col] = d[col].toString()));
         return result;
       });
-      res.status(200).json({ results });
+      res.status(200).json({ results, count });
     })
     .catch((err) => res.status(400).json(err));
 });

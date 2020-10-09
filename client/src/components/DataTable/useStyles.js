@@ -2,7 +2,10 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    width: "100%",
+  },
+  head: {
+    textTransform: "capitalize",
   },
 });
 

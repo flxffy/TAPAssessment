@@ -39,7 +39,7 @@ const DataTable = ({
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="users table">
-        <TableHead>
+        <TableHead className={classes.head}>
           <TableRow>
             {headers.map(({ label }) => (
               <TableCell key={label} direction={orderBy === label ? order : "asc"}>

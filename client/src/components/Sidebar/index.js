@@ -10,6 +10,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import useStyles from "./useStyles";
+import avatars from "./avatars";
 
 const Sidebar = ({ avatarUrl, username }) => {
   const styleProps = { drawerWidth: 240 };
@@ -46,8 +47,7 @@ Sidebar.propTypes = {
 };
 
 Sidebar.defaultProps = {
-  avatarUrl:
-    "https://d33wubrfki0l68.cloudfront.net/f61a669729f94718b8cbe980426210986589a92c/e6a9c/images/programmes/products-and-services/askjamie_thumbnail.jpg",
+  avatarUrl: avatars[Math.floor(Math.random() * Math.floor(avatars.length))],
   username: "Jamie",
 };
 

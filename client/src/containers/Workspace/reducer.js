@@ -13,6 +13,8 @@ const reducer = (state = initialState, action) => {
     case "setOrderingParams":
       const { order, orderBy } = action.payload.params;
       return { ...state, sort: `${order === "asc" ? "+" : "-"}${orderBy}` };
+    case "setOffset":
+      return { ...state, ...action.payload };
     default:
       throw new Error();
   }

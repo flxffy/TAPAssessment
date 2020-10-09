@@ -11,22 +11,27 @@ import useStyles from "./useStyles";
 const Workspace = () => {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
+  const [count, setCount] = useState(-1);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    fetchUsers(state).then(({ data: { results } }) => {
+    fetchUsers(state).then(({ data: { results, count } }) => {
       setUsers(results);
+      setCount(count);
     });
   }, [state]);
 
-  const onSetSalaryFilter = (minSalary, maxSalary) =>
+  const onSetSalaryFilter = (minSalary, maxSalary) => {
     dispatch({ type: "setSalaryRange", payload: { minSalary, maxSalary } });
+  };
 
   const onSetOrderingParams = (orderBy, order) => {
     dispatch({ type: "setOrderingParams", payload: { params: { order, orderBy } } });
   };
 
-  console.log(state);
+  const onPageChange = (_, page) => {
+    dispatch({ type: "setOffset", payload: { offset: page * state.limit } });
+  };
 
   return (
     <div className={classes.container}>
@@ -46,6 +51,10 @@ const Workspace = () => {
         order={state.sort[0] === "+" ? "asc" : "desc"}
         orderBy={state.sort.slice(1)}
         setOrderingParams={onSetOrderingParams}
+        rowsPerPage={state.limit}
+        page={state.offset / state.limit}
+        count={count}
+        handleChangePage={onPageChange}
       />
     </div>
   );

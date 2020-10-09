@@ -5,15 +5,27 @@ import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
+import TableFooter from "@material-ui/core/TableFooter";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableCell from "@material-ui/core/TableCell";
+import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@material-ui/core/Paper";
 
 import { formatDataEntry } from "./utils";
 import useStyles from "./useStyles";
 
-const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams }) => {
+const DataTable = ({
+  rows = [],
+  headers = [],
+  order,
+  orderBy,
+  setOrderingParams,
+  rowsPerPage,
+  page,
+  count,
+  handleChangePage,
+}) => {
   const classes = useStyles();
 
   const handleSelectHeader = (header) => {
@@ -51,6 +63,17 @@ const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams 
             </TableRow>
           ))}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[]}
+              count={count}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+            />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   );
@@ -59,6 +82,13 @@ const DataTable = ({ rows = [], headers = [], order, orderBy, setOrderingParams 
 DataTable.propTypes = {
   headers: PropTypes.arrayOf(PropTypes.object),
   rows: PropTypes.arrayOf(PropTypes.object),
+  order: PropTypes.string,
+  orderBy: PropTypes.string,
+  setOrderingParams: PropTypes.func,
+  rowsPerPage: PropTypes.number,
+  page: PropTypes.number,
+  count: PropTypes.number,
+  handleChangePage: PropTypes.func,
 };
 
 export default DataTable;

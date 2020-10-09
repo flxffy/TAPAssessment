@@ -20,6 +20,12 @@ const RangeInput = ({
 }) => {
   const classes = useStyles();
 
+  const handleClearFormValues = () => {
+    document.getElementById("range-lower-bound").value = "";
+    document.getElementById("range-upper-bound").value = "";
+    handleClear();
+  };
+
   return (
     <form
       className={classes.form}
@@ -63,7 +69,7 @@ const RangeInput = ({
         {buttonLabel}
       </Button>
       {(lowerBoundDefaultValue || upperBoundDefaultValue) && (
-        <Button variant="outlined" size="small" onClick={handleClear}>
+        <Button variant="outlined" size="small" onClick={handleClearFormValues}>
           Clear
         </Button>
       )}

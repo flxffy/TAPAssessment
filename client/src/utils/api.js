@@ -10,4 +10,6 @@ const uploadUsers = (file) => {
   return api.post("/users/upload", formData);
 };
 
-export { fetchUsers, uploadUsers };
+const createUser = (body) => api.post("/users/new", body);
+
+export { fetchUsers, uploadUsers, createUser };

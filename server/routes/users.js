@@ -45,16 +45,12 @@ users.get("/", async (req, res) => {
 });
 
 users.post("/new", async (req, res) => {
-  Users.updateOne(
-    { id: { $eq: req.body.id } },
-    {
-      id: req.body.id,
-      login: req.body.login,
-      name: req.body.name,
-      salary: req.body.salary,
-    },
-    { upsert: true }
-  )
+  Users.create({
+    id: req.body.id,
+    login: req.body.login,
+    name: req.body.name,
+    salary: req.body.salary,
+  })
     .then((data) => res.status(200).json(data))
     .catch((err) => res.status(400).json(err));
 });

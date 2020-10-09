@@ -1,9 +1,12 @@
 import React, { useState, useReducer, useEffect } from "react";
 
+import Button from "@material-ui/core/Button";
+
 import RangeInput from "components/RangeInput";
 import DataTable from "components/DataTable";
 import FileUpload from "components/FileUpload";
-import { fetchUsers, uploadUsers } from "utils/api";
+import UserDialog from "components/UserDialog";
+import { fetchUsers, uploadUsers, createUser } from "utils/api";
 
 import reducer, { initialState } from "./reducer";
 import { COLUMN_HEADERS } from "./constants";
@@ -13,10 +16,12 @@ const Workspace = () => {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
   const [count, setCount] = useState(-1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogProps, setDialogProps] = useState({});
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    if (state.uploading) return;
+    if (state.submitting || state.uploading) return;
     fetchUsers(state).then(({ data: { results, count } }) => {
       setUsers(results);
       setCount(count);
@@ -48,6 +53,26 @@ const Workspace = () => {
     });
   };
 
+  const onSubmitUserForm = (action, values) => {
+    dispatch({ type: "setSubmitting", payload: { submitting: true } });
+    if (action === "create") {
+      createUser(values)
+        .then(() => {
+          window.alert("User has been created successfully");
+          setIsDialogOpen(false);
+        })
+        .catch((err) => window.alert(err))
+        .finally(() => dispatch({ type: "setSubmitting", payload: { submitting: false } }));
+    }
+  };
+
+  const onOpenUserDialog = (action, initialState) => {
+    if (action === "create") {
+      setDialogProps({ initialState, action });
+    }
+    setIsDialogOpen(true);
+  };
+
   return (
     <div className={classes.container}>
       <RangeInput
@@ -73,6 +98,15 @@ const Workspace = () => {
         handleChangePage={onPageChange}
       />
       <FileUpload buttonLabel="Upload Users" handleUpload={onUploadUsers} uploading={state.uploading} />
+      <Button onClick={() => onOpenUserDialog("create", {})}>Create User</Button>
+      <UserDialog
+        open={isDialogOpen}
+        fields={COLUMN_HEADERS}
+        submitting={state.submitting}
+        handleSubmit={(form) => onSubmitUserForm("create", form)}
+        handleClose={() => setIsDialogOpen(false)}
+        {...dialogProps}
+      />
     </div>
   );
 };

@@ -8,3 +8,7 @@ export const getInputType = (dataType) => {
       throw new Error("Unsupported type");
   }
 };
+
+export const isPristine = (initialState, currentState) => {
+  return JSON.stringify(initialState) === JSON.stringify(currentState);
+};

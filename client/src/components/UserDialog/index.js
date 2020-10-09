@@ -8,12 +8,13 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { getInputType } from "utils/forms";
+import { getInputType, isPristine } from "utils/forms";
 
 import useStyles from "./useStyles";
 
 const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, handleClose, submitting }) => {
   const classes = useStyles();
+  const { id: userId } = initialState;
   const [formState, setFormState] = useState(initialState);
   const [formErrorMessages, setFormErrorMessages] = useState({});
 
@@ -28,7 +29,7 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
 
   const handleCancel = () => {
     if (
-      JSON.stringify(formState) === JSON.stringify(initialState) ||
+      isPristine(initialState, formState) ||
       window.confirm("Are you sure? Any unsaved changes will be discard.")
     ) {
       handleClose();
@@ -44,7 +45,6 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
     }
 
     if (field === "salary") {
-      console.log(formState[field]);
       if (Number.isNaN(parseFloat(formState[field]))) {
         error = "This is a required field.";
       } else if (formState[field] < 0) {
@@ -64,6 +64,7 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
             id={field}
             key={field}
             label={field}
+            defaultValue={formState[field]}
             required
             inputProps={getInputType(type)}
             onChange={(event) => handleChange(field, event.target.value)}
@@ -81,11 +82,12 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
           <CircularProgress size={24} />
         ) : (
           <Button
-            onClick={() => handleSubmit(formState)}
+            onClick={() => handleSubmit(action, formState, userId)}
             color="primary"
             disabled={
               submitting ||
-              Object.keys(formErrorMessages).length < fields.length ||
+              isPristine(initialState, formState) ||
+              Object.keys(formState).length < fields.length ||
               Object.values(formErrorMessages).some((error) => error)
             }
           >

@@ -6,7 +6,7 @@ import RangeInput from "components/RangeInput";
 import DataTable from "components/DataTable";
 import FileUpload from "components/FileUpload";
 import UserDialog from "components/UserDialog";
-import { fetchUsers, uploadUsers, createUser } from "utils/api";
+import { fetchUsers, uploadUsers, createUser, updateUser } from "utils/api";
 
 import reducer, { initialState } from "./reducer";
 import { COLUMN_HEADERS } from "./constants";
@@ -53,7 +53,7 @@ const Workspace = () => {
     });
   };
 
-  const onSubmitUserForm = (action, values) => {
+  const onSubmitUserForm = (action, values, userId) => {
     dispatch({ type: "setSubmitting", payload: { submitting: true } });
     if (action === "create") {
       createUser(values)
@@ -64,13 +64,28 @@ const Workspace = () => {
         .catch((err) => window.alert(err))
         .finally(() => dispatch({ type: "setSubmitting", payload: { submitting: false } }));
     }
+    if (action === "edit") {
+      updateUser(userId, values)
+        .then(() => {
+          window.alert("User has been updated successfully");
+          setIsDialogOpen(false);
+        })
+        .catch((err) => window.alert(err))
+        .finally(() => dispatch({ type: "setSubmitting", payload: { submitting: false } }));
+    }
   };
 
   const onOpenUserDialog = (action, initialState) => {
-    if (action === "create") {
-      setDialogProps({ initialState, action });
-    }
+    setDialogProps({ initialState, action });
     setIsDialogOpen(true);
+  };
+
+  const onEditUser = (row) => {
+    onOpenUserDialog("edit", row);
+  };
+
+  const onDeleteUser = (row) => {
+    console.log("delete", row);
   };
 
   return (
@@ -96,6 +111,8 @@ const Workspace = () => {
         page={state.offset / state.limit}
         count={count}
         handleChangePage={onPageChange}
+        handleEditRow={(row) => onEditUser(row)}
+        handleDeleteRow={(row) => onDeleteUser(row)}
       />
       <FileUpload buttonLabel="Upload Users" handleUpload={onUploadUsers} uploading={state.uploading} />
       <Button onClick={() => onOpenUserDialog("create", {})}>Create User</Button>
@@ -103,7 +120,7 @@ const Workspace = () => {
         open={isDialogOpen}
         fields={COLUMN_HEADERS}
         submitting={state.submitting}
-        handleSubmit={(form) => onSubmitUserForm("create", form)}
+        handleSubmit={(action, form, uid) => onSubmitUserForm(action, form, uid)}
         handleClose={() => setIsDialogOpen(false)}
         {...dialogProps}
       />

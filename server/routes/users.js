@@ -91,6 +91,20 @@ users.post("/upload", upload.single("file"), async (req, res) => {
     .catch(async (err) => res.status(400).json(err));
 });
 
+users.patch("/:id", async (req, res) => {
+  Users.updateOne(
+    { id: { $eq: req.params.id } },
+    {
+      id: req.body.id,
+      login: req.body.login,
+      name: req.body.name,
+      salary: req.body.salary,
+    }
+  )
+    .then((data) => res.status(200).json(data))
+    .catch((err) => res.status(400).json(err));
+});
+
 users.delete("/:id", async (req, res) => {
   Users.findOne({ id: req.params.id }, (err, user) => {
     if (err) {

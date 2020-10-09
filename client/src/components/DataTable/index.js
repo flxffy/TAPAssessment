@@ -11,6 +11,9 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableCell from "@material-ui/core/TableCell";
 import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 import { formatDataEntry } from "./utils";
 import useStyles from "./useStyles";
@@ -25,6 +28,8 @@ const DataTable = ({
   page,
   count,
   handleChangePage,
+  handleEditRow,
+  handleDeleteRow,
 }) => {
   const classes = useStyles();
 
@@ -52,14 +57,23 @@ const DataTable = ({
                 </TableSortLabel>
               </TableCell>
             ))}
+            <TableCell>actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
               {headers.map(({ label, type }) => (
-                <TableCell key={`${row.id}-${row[label]}`}>{formatDataEntry(row[label], type)}</TableCell>
+                <TableCell key={`${row.id}-${label}`}>{formatDataEntry(row[label], type)}</TableCell>
               ))}
+              <TableCell key={`${row.id}-actions`}>
+                <IconButton aria-label="edit" onClick={() => handleEditRow(row)}>
+                  <EditIcon color="action" />
+                </IconButton>
+                <IconButton aria-label="delete" onClick={() => handleDeleteRow(row)}>
+                  <DeleteIcon color="error" />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -89,6 +103,8 @@ DataTable.propTypes = {
   page: PropTypes.number,
   count: PropTypes.number,
   handleChangePage: PropTypes.func,
+  handleEditRow: PropTypes.func,
+  handleDeleteRow: PropTypes.func,
 };
 
 export default DataTable;

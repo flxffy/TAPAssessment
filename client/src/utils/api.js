@@ -12,4 +12,6 @@ const uploadUsers = (file) => {
 
 const createUser = (body) => api.post("/users/new", body);
 
-export { fetchUsers, uploadUsers, createUser };
+const updateUser = (id, body) => api.patch(`/users/${id}`, body);
+
+export { fetchUsers, uploadUsers, createUser, updateUser };

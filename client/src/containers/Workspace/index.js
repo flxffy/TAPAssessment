@@ -5,25 +5,28 @@ import DataTable from "components/DataTable";
 import { fetchUsers } from "utils/api";
 
 import reducer, { initialState } from "./reducer";
+import { COLUMN_HEADERS } from "./constants";
 import useStyles from "./useStyles";
 
 const Workspace = () => {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
-  const [headers, setHeaders] = useState([]);
-  const [filters, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    fetchUsers(filters).then(({ data: { results, columns } }) => {
+    fetchUsers(state).then(({ data: { results } }) => {
       setUsers(results);
-      setHeaders(columns);
     });
-  }, [filters]);
+  }, [state]);
 
   const onSetSalaryFilter = (minSalary, maxSalary) =>
     dispatch({ type: "setSalaryRange", payload: { minSalary, maxSalary } });
 
-  console.log(filters);
+  const onSetOrderingParams = (orderBy, order) => {
+    dispatch({ type: "setOrderingParams", payload: { params: { order, orderBy } } });
+  };
+
+  console.log(state);
 
   return (
     <div className={classes.container}>
@@ -32,12 +35,18 @@ const Workspace = () => {
         inputLabel="Filter by Salary"
         lowerBoundLabel="Minimum"
         upperBoundLabel="Maximum"
-        lowerBoundDefaultValue={filters.minSalary}
-        upperBoundDefaultValue={filters.maxSalary}
+        lowerBoundDefaultValue={state.minSalary}
+        upperBoundDefaultValue={state.maxSalary}
         inputAdornment="$"
         buttonLabel="Filter"
       />
-      <DataTable headers={headers} rows={users} />
+      <DataTable
+        headers={COLUMN_HEADERS}
+        rows={users}
+        order={state.sort[0] === "+" ? "asc" : "desc"}
+        orderBy={state.sort.slice(1)}
+        setOrderingParams={onSetOrderingParams}
+      />
     </div>
   );
 };

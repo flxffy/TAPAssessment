@@ -4,6 +4,7 @@ const initialState = {
   offset: 0,
   limit: 30,
   sort: "+id",
+  uploading: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -14,6 +15,8 @@ const reducer = (state = initialState, action) => {
       const { order, orderBy } = action.payload.params;
       return { ...state, sort: `${order === "asc" ? "+" : "-"}${orderBy}` };
     case "setOffset":
+      return { ...state, ...action.payload };
+    case "setUploading":
       return { ...state, ...action.payload };
     default:
       throw new Error();

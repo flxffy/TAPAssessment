@@ -2,7 +2,8 @@ import React, { useState, useReducer, useEffect } from "react";
 
 import RangeInput from "components/RangeInput";
 import DataTable from "components/DataTable";
-import { fetchUsers } from "utils/api";
+import FileUpload from "components/FileUpload";
+import { fetchUsers, uploadUsers } from "utils/api";
 
 import reducer, { initialState } from "./reducer";
 import { COLUMN_HEADERS } from "./constants";
@@ -15,6 +16,7 @@ const Workspace = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
+    if (state.uploading) return;
     fetchUsers(state).then(({ data: { results, count } }) => {
       setUsers(results);
       setCount(count);
@@ -31,6 +33,13 @@ const Workspace = () => {
 
   const onPageChange = (_, page) => {
     dispatch({ type: "setOffset", payload: { offset: page * state.limit } });
+  };
+
+  const onUploadUsers = (file) => {
+    dispatch({ type: "setUploading", payload: { uploading: true } });
+    uploadUsers(file).then(() => {
+      dispatch({ type: "setUploading", payload: { uploading: false } });
+    });
   };
 
   return (
@@ -56,6 +65,7 @@ const Workspace = () => {
         count={count}
         handleChangePage={onPageChange}
       />
+      <FileUpload buttonLabel="Upload Users" handleUpload={onUploadUsers} uploading={state.uploading} />
     </div>
   );
 };

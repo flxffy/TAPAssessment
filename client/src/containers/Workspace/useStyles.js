@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-start",
     justifyContent: "flex-start",
     width: "100%",
+    "& > :not(:first-child)": {
+      marginTop: theme.spacing(1),
+    },
   },
 }));
 

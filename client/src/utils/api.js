@@ -4,4 +4,10 @@ const api = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL });
 
 const fetchUsers = (params) => api.get("/users", { params });
 
-export { fetchUsers };
+const uploadUsers = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return api.post("/users/upload", formData);
+};
+
+export { fetchUsers, uploadUsers };

@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   avatar: {
     width: (props) => props.drawerWidth,
-    borderRadius: "50%",
+    height: (props) => props.drawerWidth,
   },
   drawer: {
     width: (props) => props.drawerWidth,

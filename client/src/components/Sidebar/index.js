@@ -2,9 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
+import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
+import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
@@ -24,7 +25,7 @@ const Sidebar = ({ avatarUrl, username }) => {
       classes={{ paper: classes.drawerPaper }}
     >
       <div className={classes.drawerHeader}>
-        <img src={avatarUrl} alt="User Avatar" className={classes.avatar} />
+        <Avatar src={avatarUrl} alt="User Avatar" className={classes.avatar} />
         <Typography variant="body1">{username}</Typography>
       </div>
       <Divider />

@@ -134,3 +134,45 @@ describe("test getUsers", () => {
     });
   });
 });
+
+describe("test createUser", () => {
+  beforeAll(async () => {
+    connection = await mongoose.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it("create user success", async () => {
+    const user = { id: "id", login: "login", name: "name", salary: "1" };
+    const { code } = await service.createUser(user);
+    const actual = await User.findOne({ id: { $eq: user.id } });
+
+    expect(code).toBe(200);
+    User.columns.forEach((column) => {
+      expect(actual[column].toString()).toBe(user[column]);
+    });
+  });
+
+  describe("create user failure", async () => {
+    it("invalid salary (below 0)", async () => {
+      const user = { id: "id", login: "login", name: "name", salary: "-1" };
+      await expect(service.createUser(user)).rejects.toBeTruthy();
+    });
+
+    it("duplicate id", async () => {
+      const user1 = { id: "id", login: "l1", name: "n1", salary: "1" };
+      const user2 = { id: "id", login: "l2", name: "n2", salary: "2" };
+      await expect(service.createUser(user1)).resolves.toBeTruthy();
+      await expect(service.createUser(user2)).rejects.toBeTruthy();
+    });
+  });
+});

@@ -267,3 +267,67 @@ describe.skip("test upsertUsers", () => {
     });
   });
 });
+
+describe("test updateUser", () => {
+  const users = [
+    { id: "e1", login: "l1", name: "rick", salary: "5" },
+    { id: "e2", login: "l2", name: "morty", salary: "4" },
+    { id: "e3", login: "l3", name: "summer", salary: "3" },
+    { id: "e4", login: "l4", name: "beth", salary: "2" },
+    { id: "e5", login: "l5", name: "jerry", salary: "1" },
+  ];
+
+  beforeAll(async () => {
+    connection = await mongoose.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  beforeEach(async () => {
+    await Promise.all(users.map((user) => User.create(user)));
+  });
+
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it("update user success", async () => {
+    const [user] = users;
+    const expected = { ...user, id: "newId" };
+    const { code } = await service.updateUser(user.id, expected);
+    const actual = await User.findOne({ id: { $eq: expected.id } });
+
+    expect(code).toBe(200);
+    User.columns.forEach((column) => {
+      expect(actual[column].toString()).toBe(expected[column]);
+    });
+  });
+
+  describe("update user failure", () => {
+    it("invalid salary (below 0)", async () => {
+      const [user] = users;
+      const test = { ...user, salary: "-1" };
+      await expect(service.updateUser(user.id, test)).rejects.toBeTruthy();
+    });
+
+    it("duplicate id", async () => {
+      const [user1, user2] = users;
+      await expect(service.updateUser(user1.id, { ...user1, id: user2.id })).rejects.toBeTruthy();
+    });
+
+    it("duplicate login", async () => {
+      const [user1, user2] = users;
+      await expect(service.updateUser(user1.id, { ...user1, login: user2.login })).rejects.toBeTruthy();
+    });
+
+    it("non-existent user", async () => {
+      const user = { id: "non existent", login: "b", name: "c", salary: "0" };
+      await expect(service.updateUser(user.id, user)).rejects.toBeTruthy();
+    });
+  });
+});

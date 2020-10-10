@@ -328,3 +328,39 @@ describe("test updateUser", () => {
     });
   });
 });
+
+describe("test deleteUser", () => {
+  const user = { id: "e1", login: "l1", name: "rick", salary: "5" };
+
+  beforeAll(async () => {
+    connection = await mongoose.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  beforeEach(async () => {
+    await User.create(user);
+  });
+
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it("delete user success", async () => {
+    const { code } = await service.deleteUser(user.id);
+    expect(code).toBe(200);
+    expect(await User.count({ id: { $eq: user.id } })).toBe(0);
+  });
+
+  describe("delete user failure", () => {
+    it("non-existent user", async () => {
+      const test = { id: "non existent" };
+      await expect(service.deleteUser(test.id)).rejects.toBeTruthy();
+    });
+  });
+});

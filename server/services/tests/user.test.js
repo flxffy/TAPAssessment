@@ -176,3 +176,94 @@ describe("test createUser", () => {
     });
   });
 });
+
+describe.skip("test upsertUsers", () => {
+  /**
+   * Skipped because of unresolved errors in test
+   * db from the use of transactions in upsertUsers()
+   */
+  beforeAll(async () => {
+    connection = await mongoose.connect(global.__MONGO_URI__, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
+
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
+
+  describe("upsert users success", () => {
+    it("inserts only", async () => {
+      const users = [
+        { id: "e1", login: "l1", name: "rick", salary: "5" },
+        { id: "e2", login: "l2", name: "morty", salary: "4" },
+        { id: "e3", login: "l3", name: "summer", salary: "3" },
+        { id: "e4", login: "l4", name: "beth", salary: "2" },
+        { id: "e5", login: "l5", name: "jerry", salary: "1" },
+      ];
+
+      const beforeCount = await User.countDocuments({});
+      expect(beforeCount).toBe(0);
+
+      const { code } = await service.upsertUsers(users);
+      const afterCount = await User.countDocuments({});
+      expect(code).toBe(200);
+      expect(afterCount).toBe(users.length);
+    });
+
+    it("updates only", async () => {
+      const users = [
+        { id: "e1", login: "l1", name: "rick", salary: "5" },
+        { id: "e2", login: "l2", name: "morty", salary: "4" },
+        { id: "e3", login: "l3", name: "summer", salary: "3" },
+        { id: "e4", login: "l4", name: "beth", salary: "2" },
+        { id: "e5", login: "l5", name: "jerry", salary: "1" },
+      ];
+
+      await Promise.all(users.map((user) => User.create(user)));
+      const beforeCount = await User.countDocuments({});
+
+      const expected = users.map((user) => (user.name = "a"));
+      const { code } = await service.upsertUsers(expected);
+      const actual = await User.find({});
+
+      expect(code).toBe(200);
+      expect(actual.length).toBe(beforeCount);
+      actual.forEach((result, i) => {
+        User.columns.forEach((column) => {
+          expect(result[column]).toBe(expected[i][column]);
+        });
+      });
+    });
+
+    it("inserts and updates", async () => {
+      const users = [
+        { id: "e1", login: "l1", name: "rick", salary: "5" },
+        { id: "e2", login: "l2", name: "morty", salary: "4" },
+        { id: "e3", login: "l3", name: "summer", salary: "3" },
+        { id: "e4", login: "l4", name: "beth", salary: "2" },
+        { id: "e5", login: "l5", name: "jerry", salary: "1" },
+      ];
+
+      await Promise.all(users.slice(0, 3).map((user) => User.create(user)));
+      const beforeCount = await User.countDocuments({});
+
+      const expected = users.map((user) => (user.name = "a"));
+      const { code } = await service.upsertUsers(expected);
+      const actual = await User.find({});
+
+      expect(code).toBe(200);
+      expect(actual.length).toBe(users.length);
+      actual.forEach((result, i) => {
+        User.columns.forEach((column) => {
+          expect(result[column]).toBe(expected[i][column]);
+        });
+      });
+    });
+  });
+});

@@ -272,9 +272,6 @@ describe("test updateUser", () => {
   const users = [
     { id: "e1", login: "l1", name: "rick", salary: "5" },
     { id: "e2", login: "l2", name: "morty", salary: "4" },
-    { id: "e3", login: "l3", name: "summer", salary: "3" },
-    { id: "e4", login: "l4", name: "beth", salary: "2" },
-    { id: "e5", login: "l5", name: "jerry", salary: "1" },
   ];
 
   beforeAll(async () => {

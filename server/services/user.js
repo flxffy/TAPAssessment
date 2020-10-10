@@ -18,8 +18,10 @@ const getUsers = ({
       reject({ code: 400, err: "Invalid sort criteria" });
     }
 
-    const count = await User.countDocuments({});
-    User.find({ salary: { $gte: minSalary, $lte: maxSalary } })
+    const filter = { salary: { $gte: minSalary, $lte: maxSalary } };
+    const count = await User.countDocuments(filter); // total
+
+    User.find(filter)
       .sort(sortCriteria)
       .skip(parseInt(offset))
       .limit(parseInt(limit))

@@ -25,3 +25,4 @@ const User = mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", User);
+module.exports.columns = ["id", "login", "name", "salary"];

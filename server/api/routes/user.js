@@ -1,70 +1,36 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 const parse = require("csv-parse/lib/sync");
 
 const User = require("../../models/user");
+const user = require("../../services/user");
 const users = express.Router();
 
-const columns = ["id", "login", "name", "salary"];
-
 users.get("/", async (req, res) => {
-  const {
-    minSalary = 0,
-    maxSalary = Number.MAX_SAFE_INTEGER,
-    offset = 0,
-    limit = 30,
-    sort = "+id",
-  } = req.query;
-
-  const sortCriteria = {};
-  if (sort[0] == "+") {
-    sortCriteria[sort.slice(1)] = 1;
-  } else if (sort[0] == "-") {
-    sortCriteria[sort.slice(1)] = -1;
-  } else {
-    res.status(400).json({ reason: "Invalid sort criteria" });
-    return;
-  }
-
-  const count = await User.countDocuments({});
-  User.find({ salary: { $gte: minSalary, $lte: maxSalary } })
-    .sort(sortCriteria)
-    .skip(parseInt(offset))
-    .limit(parseInt(limit))
-    .then((data) => {
-      const results = data.map((d) => {
-        const result = {};
-        columns.forEach((col) => (result[col] = d[col].toString()));
-        return result;
-      });
-      res.status(200).json({ results, count });
-    })
-    .catch((err) => res.status(400).json(err));
+  user
+    .getUsers(req.query)
+    .then(({ code, ...data }) => res.status(code).json(data))
+    .catch(({ code, err }) => res.status(code).json(err));
 });
 
 users.post("/new", async (req, res) => {
-  User.create({
-    id: req.body.id,
-    login: req.body.login,
-    name: req.body.name,
-    salary: req.body.salary,
-  })
-    .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json(err));
+  user
+    .createUser(req.body)
+    .then(({ code, data }) => res.status(code).json(data))
+    .catch(({ code, err }) => res.status(code).json(err));
 });
 
 users.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file.size) {
-    res.status(400).json({ reason: "Empty file" });
+    res.status(400).json({ err: "Empty file" });
     return;
   }
 
-  let records;
+  let users;
   try {
-    records = await parse(req.file.buffer.toString(), {
-      columns: columns,
+    users = await parse(req.file.buffer.toString(), {
+      columns: User.columns,
       comment: "#",
       trim: true,
       skip_empty_lines: true,
@@ -74,47 +40,24 @@ users.post("/upload", upload.single("file"), async (req, res) => {
     return;
   }
 
-  const session = await mongoose.startSession();
-  session
-    .withTransaction(() => {
-      return Promise.all(
-        records.map(async (record) =>
-          User.updateOne({ id: { $eq: record.id } }, record, {
-            upsert: true,
-            runValidators: true,
-            session,
-          })
-        )
-      );
-    })
-    .then(async (data) => res.status(200).json(data))
-    .catch(async (err) => res.status(400).json(err));
+  user
+    .upsertUsers(users)
+    .then(async ({ code, data }) => res.status(code).json(data))
+    .catch(async ({ code, err }) => res.status(code).json(err));
 });
 
 users.patch("/:id", async (req, res) => {
-  User.updateOne(
-    { id: { $eq: req.params.id } },
-    {
-      id: req.body.id,
-      login: req.body.login,
-      name: req.body.name,
-      salary: req.body.salary,
-    }
-  )
-    .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json(err));
+  user
+    .updateUser(req.params.id, req.body)
+    .then(({ code, data }) => res.status(code).json(data))
+    .catch(({ code, err }) => res.status(code).json(err));
 });
 
 users.delete("/:id", async (req, res) => {
-  User.findOne({ id: req.params.id }, (err, user) => {
-    if (err) {
-      res.status(400).json(err).send();
-    } else if (!user) {
-      res.status(404).send();
-    } else {
-      User.deleteOne(user).then((data) => res.status(200).json(data));
-    }
-  });
+  user
+    .deleteUser(req.params.id)
+    .then(({ code, data }) => res.status(code).json(data))
+    .catch(({ code, err }) => res.status(code).json(err));
 });
 
 module.exports = users;

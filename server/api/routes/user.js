@@ -4,7 +4,7 @@ const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 const parse = require("csv-parse/lib/sync");
 
-const Users = require("../models/Users");
+const User = require("../../models/user");
 const users = express.Router();
 
 const columns = ["id", "login", "name", "salary"];
@@ -28,8 +28,8 @@ users.get("/", async (req, res) => {
     return;
   }
 
-  const count = await Users.countDocuments({});
-  Users.find({ salary: { $gte: minSalary, $lte: maxSalary } })
+  const count = await User.countDocuments({});
+  User.find({ salary: { $gte: minSalary, $lte: maxSalary } })
     .sort(sortCriteria)
     .skip(parseInt(offset))
     .limit(parseInt(limit))
@@ -45,7 +45,7 @@ users.get("/", async (req, res) => {
 });
 
 users.post("/new", async (req, res) => {
-  Users.create({
+  User.create({
     id: req.body.id,
     login: req.body.login,
     name: req.body.name,
@@ -79,7 +79,7 @@ users.post("/upload", upload.single("file"), async (req, res) => {
     .withTransaction(() => {
       return Promise.all(
         records.map(async (record) =>
-          Users.updateOne({ id: { $eq: record.id } }, record, {
+          User.updateOne({ id: { $eq: record.id } }, record, {
             upsert: true,
             runValidators: true,
             session,
@@ -92,7 +92,7 @@ users.post("/upload", upload.single("file"), async (req, res) => {
 });
 
 users.patch("/:id", async (req, res) => {
-  Users.updateOne(
+  User.updateOne(
     { id: { $eq: req.params.id } },
     {
       id: req.body.id,
@@ -106,13 +106,13 @@ users.patch("/:id", async (req, res) => {
 });
 
 users.delete("/:id", async (req, res) => {
-  Users.findOne({ id: req.params.id }, (err, user) => {
+  User.findOne({ id: req.params.id }, (err, user) => {
     if (err) {
       res.status(400).json(err).send();
     } else if (!user) {
       res.status(404).send();
     } else {
-      Users.deleteOne(user).then((data) => res.status(200).json(data));
+      User.deleteOne(user).then((data) => res.status(200).json(data));
     }
   });
 });

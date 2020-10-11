@@ -12,7 +12,10 @@
 
 ## Instructions for Setting Up Locally
 
-Both client and server must be running at the same time.
+### IMPORTANT
+
+- Both client and server must be running at the same time.
+- Start the server and ensure it is connected to the database before starting the client.
 
 ### Client
 

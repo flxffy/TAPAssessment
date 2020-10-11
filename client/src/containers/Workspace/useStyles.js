@@ -17,6 +17,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    flexWrap: "wrap",
+    marginTop: theme.spacing(-0.5),
+    "& > *": {
+      marginTop: theme.spacing(0.5),
+    },
   },
   buttons: {
     display: "flex",

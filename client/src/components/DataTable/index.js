@@ -11,6 +11,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableCell from "@material-ui/core/TableCell";
 import TablePagination from "@material-ui/core/TablePagination";
 import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -19,6 +20,7 @@ import { formatDataEntry } from "./utils";
 import useStyles from "./useStyles";
 
 const DataTable = ({
+  title,
   rows = [],
   headers = [],
   sortDirection,
@@ -42,67 +44,71 @@ const DataTable = ({
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="users table" size="small">
-        <TableHead className={classes.head}>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[]}
-              count={count}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-            />
-          </TableRow>
-          <TableRow>
-            {headers.map(({ label }) => (
-              <TableCell key={label} direction={sortBy === label ? sortDirection : "asc"}>
-                <TableSortLabel
-                  active={sortBy === label}
-                  direction={sortBy === label ? sortDirection : "asc"}
-                  onClick={() => handleSelectHeader(label)}
-                >
-                  {label}
-                </TableSortLabel>
-              </TableCell>
-            ))}
-            <TableCell>actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              {headers.map(({ label, type }) => (
-                <TableCell key={`${row.id}-${label}`}>{formatDataEntry(row[label], type)}</TableCell>
-              ))}
-              <TableCell key={`${row.id}-actions`}>
-                <IconButton aria-label="edit" onClick={() => handleEditRow(row)}>
-                  <EditIcon color="action" />
-                </IconButton>
-                <IconButton aria-label="delete" onClick={() => handleDeleteRow(row)}>
-                  <DeleteIcon color="error" />
-                </IconButton>
-              </TableCell>
+    <div className={classes.root}>
+      <Typography variant="h6">{title}</Typography>
+      <TableContainer component={Paper}>
+        <Table aria-label="users table" size="small">
+          <TableHead className={classes.head}>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[]}
+                count={count}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+              />
             </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              rowsPerPageOptions={[]}
-              count={count}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+            <TableRow>
+              {headers.map(({ label }) => (
+                <TableCell key={label} direction={sortBy === label ? sortDirection : "asc"}>
+                  <TableSortLabel
+                    active={sortBy === label}
+                    direction={sortBy === label ? sortDirection : "asc"}
+                    onClick={() => handleSelectHeader(label)}
+                  >
+                    {label}
+                  </TableSortLabel>
+                </TableCell>
+              ))}
+              <TableCell>actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.id}>
+                {headers.map(({ label, type }) => (
+                  <TableCell key={`${row.id}-${label}`}>{formatDataEntry(row[label], type)}</TableCell>
+                ))}
+                <TableCell key={`${row.id}-actions`}>
+                  <IconButton aria-label="edit" onClick={() => handleEditRow(row)}>
+                    <EditIcon color="action" />
+                  </IconButton>
+                  <IconButton aria-label="delete" onClick={() => handleDeleteRow(row)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={[]}
+                count={count}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 
 DataTable.propTypes = {
+  title: PropTypes.string,
   headers: PropTypes.arrayOf(PropTypes.object),
   rows: PropTypes.arrayOf(PropTypes.object),
   sortDirection: PropTypes.string,

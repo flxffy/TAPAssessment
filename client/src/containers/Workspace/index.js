@@ -121,6 +121,7 @@ const Workspace = () => {
         </div>
       </div>
       <DataTable
+        title="Employees"
         headers={COLUMN_HEADERS}
         rows={users}
         sortDirection={state.sort[0] === "+" ? "asc" : "desc"}

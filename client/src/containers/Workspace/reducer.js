@@ -15,8 +15,8 @@ const reducer = (state = initialState, action) => {
     case "clearSalaryRange":
       return { ...state, minSalary: initialState.minSalary, maxSalary: initialState.maxSalary };
     case "setOrderingParams":
-      const { order, orderBy } = action.payload.params;
-      return { ...state, sort: `${order === "asc" ? "+" : "-"}${orderBy}` };
+      const { sortDirection, sortBy } = action.payload.params;
+      return { ...state, sort: `${sortDirection === "asc" ? "+" : "-"}${sortBy}` };
     case "setOffset":
       return { ...state, ...action.payload };
     case "setUploading":

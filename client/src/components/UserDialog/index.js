@@ -91,7 +91,7 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
               Object.values(formErrorMessages).some((error) => error)
             }
           >
-            {action}
+            {action === "edit" ? "Save" : action}
           </Button>
         )}
       </DialogActions>

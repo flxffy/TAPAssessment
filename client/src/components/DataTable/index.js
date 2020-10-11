@@ -21,8 +21,8 @@ import useStyles from "./useStyles";
 const DataTable = ({
   rows = [],
   headers = [],
-  order,
-  orderBy,
+  sortDirection,
+  sortBy,
   setOrderingParams,
   rowsPerPage,
   page,
@@ -34,8 +34,8 @@ const DataTable = ({
   const classes = useStyles();
 
   const handleSelectHeader = (header) => {
-    if (orderBy === header) {
-      setOrderingParams(header, order === "asc" ? "desc" : "asc");
+    if (sortBy === header) {
+      setOrderingParams(header, sortDirection === "asc" ? "desc" : "asc");
     } else {
       setOrderingParams(header, "asc");
     }
@@ -47,10 +47,10 @@ const DataTable = ({
         <TableHead className={classes.head}>
           <TableRow>
             {headers.map(({ label }) => (
-              <TableCell key={label} direction={orderBy === label ? order : "asc"}>
+              <TableCell key={label} direction={sortBy === label ? sortDirection : "asc"}>
                 <TableSortLabel
-                  active={orderBy === label}
-                  direction={orderBy === label ? order : "asc"}
+                  active={sortBy === label}
+                  direction={sortBy === label ? sortDirection : "asc"}
                   onClick={() => handleSelectHeader(label)}
                 >
                   {label}
@@ -96,8 +96,8 @@ const DataTable = ({
 DataTable.propTypes = {
   headers: PropTypes.arrayOf(PropTypes.object),
   rows: PropTypes.arrayOf(PropTypes.object),
-  order: PropTypes.string,
-  orderBy: PropTypes.string,
+  sortDirection: PropTypes.string,
+  sortBy: PropTypes.string,
   setOrderingParams: PropTypes.func,
   rowsPerPage: PropTypes.number,
   page: PropTypes.number,

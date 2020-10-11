@@ -38,8 +38,8 @@ const Workspace = () => {
       payload: { minSalary: initialState.minSalary, maxSalary: initialState.maxSalary },
     });
 
-  const onSetOrderingParams = (orderBy, order) => {
-    dispatch({ type: "setOrderingParams", payload: { params: { order, orderBy } } });
+  const onSetOrderingParams = (sortBy, sortDirection) => {
+    dispatch({ type: "setOrderingParams", payload: { params: { sortDirection, sortBy } } });
   };
 
   const onPageChange = (_, page) => {
@@ -123,8 +123,8 @@ const Workspace = () => {
       <DataTable
         headers={COLUMN_HEADERS}
         rows={users}
-        order={state.sort[0] === "+" ? "asc" : "desc"}
-        orderBy={state.sort.slice(1)}
+        sortDirection={state.sort[0] === "+" ? "asc" : "desc"}
+        sortBy={state.sort.slice(1)}
         setOrderingParams={onSetOrderingParams}
         rowsPerPage={state.limit}
         page={state.offset / state.limit}

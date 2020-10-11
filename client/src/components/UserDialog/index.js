@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -13,7 +15,10 @@ import { getInputType, isPristine } from "utils/forms";
 import useStyles from "./useStyles";
 
 const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, handleClose, submitting }) => {
+  const theme = useTheme();
   const classes = useStyles();
+  const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+
   const { id: userId } = initialState;
   const [formState, setFormState] = useState(initialState);
   const [formErrorMessages, setFormErrorMessages] = useState({});
@@ -56,7 +61,13 @@ const UserDialog = ({ initialState = {}, action, fields, open, handleSubmit, han
   };
 
   return (
-    <Dialog open={open} classes={{ paper: classes.root }} disableBackdropClick disableEscapeKeyDown>
+    <Dialog
+      fullScreen={isMobile}
+      open={open}
+      classes={{ paper: classes.root }}
+      disableBackdropClick
+      disableEscapeKeyDown
+    >
       <DialogTitle className={classes.title}>{`${action} User`}</DialogTitle>
       <DialogContent className={classes.content}>
         {fields.map(({ label: field, type }) => (

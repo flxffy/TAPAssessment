@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
-    padding: theme.spacing(2),
+    marginTop: theme.spacing(2),
     alignItems: "flex-start",
     justifyContent: "flex-start",
     width: "100%",

@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       flexDirection: "column",
     },
+    padding: theme.spacing(0, 2),
   },
 }));
 

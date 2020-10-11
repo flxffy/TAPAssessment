@@ -65,14 +65,16 @@ const RangeInput = ({
           startAdornment: <InputAdornment position="start">{inputAdornment}</InputAdornment>,
         }}
       />
-      <Button type="submit" variant="outlined" size="small">
-        {buttonLabel}
-      </Button>
-      {(lowerBoundDefaultValue || upperBoundDefaultValue) && (
-        <Button variant="outlined" size="small" onClick={handleClearFormValues}>
-          Clear
+      <div>
+        <Button type="submit" variant="outlined" size="small">
+          {buttonLabel}
         </Button>
-      )}
+        {(lowerBoundDefaultValue || upperBoundDefaultValue) && (
+          <Button variant="outlined" size="small" onClick={handleClearFormValues}>
+            Clear
+          </Button>
+        )}
+      </div>
     </form>
   );
 };

@@ -80,10 +80,10 @@ const DataTable = ({
                   <TableCell key={`${row.id}-${label}`}>{formatDataEntry(row[label], type)}</TableCell>
                 ))}
                 <TableCell key={`${row.id}-actions`}>
-                  <IconButton aria-label="edit" onClick={() => handleEditRow(row)}>
+                  <IconButton aria-label="edit" onClick={() => handleEditRow(row)} size="small">
                     <EditIcon color="action" />
                   </IconButton>
-                  <IconButton aria-label="delete" onClick={() => handleDeleteRow(row)}>
+                  <IconButton aria-label="delete" onClick={() => handleDeleteRow(row)} size="small">
                     <DeleteIcon color="error" />
                   </IconButton>
                 </TableCell>

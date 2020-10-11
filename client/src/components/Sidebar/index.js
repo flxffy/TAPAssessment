@@ -43,23 +43,19 @@ const Sidebar = ({ avatarUrl, username, buttons }) => {
   return (
     <nav className={classes.drawer}>
       <Hidden mdUp implementation="css">
-        {open ? (
-          <Drawer
-            variant="temporary"
-            anchor="left"
-            open={open}
-            onClose={toggleSidebar}
-            classes={{ paper: classes.drawerPaper }}
-          >
-            {drawer}
-          </Drawer>
-        ) : (
-          <IconButton onClick={toggleSidebar}>
-            <MenuIcon />
-          </IconButton>
-        )}
+        <Drawer
+          variant="temporary"
+          anchor="left"
+          open={open}
+          onClose={toggleSidebar}
+          classes={{ paper: classes.drawerPaper }}
+        >
+          {drawer}
+        </Drawer>
+        <IconButton onClick={toggleSidebar}>
+          <MenuIcon />
+        </IconButton>
       </Hidden>
-
       <Hidden smDown implementation="css">
         <Drawer open className={classes.drawer} variant="permanent" classes={{ paper: classes.drawerPaper }}>
           {drawer}

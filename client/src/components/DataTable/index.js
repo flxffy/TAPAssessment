@@ -43,8 +43,17 @@ const DataTable = ({
 
   return (
     <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="users table">
+      <Table className={classes.table} aria-label="users table" size="small">
         <TableHead className={classes.head}>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[]}
+              count={count}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+            />
+          </TableRow>
           <TableRow>
             {headers.map(({ label }) => (
               <TableCell key={label} direction={sortBy === label ? sortDirection : "asc"}>

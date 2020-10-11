@@ -8,6 +8,9 @@ import useStyles from "./useStyles";
 
 const FileUpload = ({ buttonLabel, handleUpload, uploading, ...props }) => {
   const classes = useStyles();
+
+  const handleClick = () => document.getElementById("upload-csv-file").click();
+
   return (
     <div>
       <input
@@ -17,15 +20,14 @@ const FileUpload = ({ buttonLabel, handleUpload, uploading, ...props }) => {
         className={classes.input}
         onChange={(event) => handleUpload(event.target.files[0])}
       />
-      <label htmlFor="upload-csv-file">
-        {uploading ? (
-          <CircularProgress size={24} />
-        ) : (
-          <Button variant="contained" color="primary" component="span" disabled={uploading} {...props}>
-            {buttonLabel}
-          </Button>
-        )}
-      </label>
+
+      {uploading ? (
+        <CircularProgress size={24} />
+      ) : (
+        <Button onClick={handleClick} variant="contained" color="primary" disabled={uploading} {...props}>
+          {buttonLabel}
+        </Button>
+      )}
     </div>
   );
 };
